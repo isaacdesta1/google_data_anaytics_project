@@ -1,0 +1,69 @@
+#create a new table adding ride_length, day of week and extract the month from started at then remove null values
+CREATE TABLE IF NOT EXISTS capstone-project-1-398219.Cyclistic_rider_data.clean_12_month_data AS ( --(step 1)--
+  SELECT 
+    a.ride_id, rideable_type, started_at, ended_at, 
+    ride_length,
+    CASE EXTRACT(DAYOFWEEK FROM started_at)
+      WHEN 1 THEN 'SUN'
+      WHEN 2 THEN 'MON'
+      WHEN 3 THEN 'TUES'
+      WHEN 4 THEN 'WED'
+      WHEN 5 THEN 'THURS'
+      WHEN 6 THEN 'FRI'
+      WHEN 7 THEN 'SAT'    
+    END AS day_of_week,
+    CASE EXTRACT(MONTH FROM started_at)
+      WHEN 1 THEN 'JAN'
+      WHEN 2 THEN 'FEB'
+      WHEN 3 THEN 'MAR'
+      WHEN 4 THEN 'APR'
+      WHEN 5 THEN 'MAY'
+      WHEN 6 THEN 'JUN'
+      WHEN 7 THEN 'JUL'
+      WHEN 8 THEN 'AUG'
+      WHEN 9 THEN 'SEP'
+      WHEN 10 THEN 'OCT'
+      WHEN 11 THEN 'NOV'
+      WHEN 12 THEN 'DEC'
+    END AS month,
+    start_station_name, end_station_name, 
+    start_lat, start_lng, end_lat, end_lng, member_casual
+  FROM capstone-project-1-398219.Cyclistic_rider_data.12_month_data a
+  JOIN (
+    SELECT ride_id, (                                                   
+      EXTRACT(HOUR FROM (ended_at - started_at)) * 60 +
+      EXTRACT(MINUTE FROM (ended_at - started_at)) +
+      EXTRACT(SECOND FROM (ended_at - started_at)) / 60) AS ride_length
+    FROM capstone-project-1-398219.Cyclistic_rider_data.12_month_data
+  ) b 
+  ON a.ride_id = b.ride_id
+  WHERE                                                                 
+    start_station_name IS NOT NULL AND
+    end_station_name IS NOT NULL AND
+    end_lat IS NOT NULL AND
+    end_lng IS NOT NULL AND
+    ride_length > 1 AND ride_length < 1440                           
+);
+
+#remove the null values and create a new dataset
+CREATE TABLE `thematic-coda-418321.trip_2023.new_12_months_dataset` AS
+SELECT 
+  *
+FROM 
+  `thematic-coda-418321.trip_2023.12_months_dataset`
+WHERE 
+  ride_id IS NOT NULL AND
+  rideable_type IS NOT NULL AND
+  started_at IS NOT NULL AND
+  ended_at IS NOT NULL AND
+  ride_length IS NOT NULL AND
+  Day_of_week IS NOT NULL AND
+  start_station_name IS NOT NULL AND
+  start_station_id IS NOT NULL AND
+  end_station_name IS NOT NULL AND
+  end_station_id IS NOT NULL AND
+  start_lat IS NOT NULL AND
+  start_lng IS NOT NULL AND
+  end_lat IS NOT NULL AND
+  end_lng IS NOT NULL AND
+  member_casual IS NOT NULL;
