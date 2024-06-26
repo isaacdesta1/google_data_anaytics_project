@@ -1,0 +1,15 @@
+#After using the statstics data set
+
+* The analysis of average ride length by month indicates a notable increase in ride lengths during the summer months. This suggests that outdoor temperature plays a significant role in influencing ride duration.
+
+the average ride length of the member is 12.3 and casual riders is 23.2. this shows,
+* Members: Members might use the service more frequently for shorter, routine trips such as commuting, running errands, or other regular activities. Their lower average ride length indicates that their usage is likely more utilitarian and integrated into their daily routines.
+* Casual Riders: Casual riders, on the other hand, may use the service more sporadically, often for leisure or recreational purposes. The higher average ride length suggests that they might be using the bikes for longer, more leisurely rides, such as exploring the city or enjoying outdoor activities.
+
+Total number of rides
+* Members: The high total number of rides by members points to a strong dependence on the service for daily commuting, errands, and other routine activities. Members are likely to have incorporated bike rides into their regular transportation habits.
+* Casual Riders: Although casual riders have a substantial number of rides, the lower figure compared to members implies that casual riders might use the service more sporadically, possibly for occasional recreational or leisure activities rather than daily needs.
+
+Total number of rides by bike type
+* First, casual riders might find docked bikes easier to access for spontaneous trips without needing to worry about returning the bike to a specific location. 
+* The overall results show distinct preferences and behaviors between casual and member riders. Members heavily rely on the service for daily commuting, favoring both electric and classic bikes for different needs. Casual riders use the service for less frequent but longer rides, with a notable use of docked bikes for their convenience. Understanding these patterns helps tailor the service to better meet the needs of both user groups, improving satisfaction and engagement.
