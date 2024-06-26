@@ -1,1 +1,50 @@
+#create the statstic data
+CREATE TABLE `thematic-coda-418321.trip_2023.ride_statistics` (
+  member_casual STRING,
+  month STRING,
+  day_of_week STRING,
+  bike_type STRING,
+  start_station_name STRING,
+  end_station_name STRING,
+  avg_ride_length FLOAT64,
+  avg_ride_length_by_month FLOAT64,
+  total_num_of_rides INT64,
+  total_num_of_rides_by_bike_type INT64,
+  total_rides_by_day_of_week INT64,
+  total_trips INT64,
+  start_lat FLOAT64,
+  start_lng FLOAT64,
+  end_lat FLOAT64,
+  end_lng FLOAT64
+);
 
+-- Insert average ride length by user
+INSERT INTO `thematic-coda-418321.trip_2023.ride_statistics` (member_casual, avg_ride_length)
+SELECT member_casual, AVG(ride_length) AS avg_ride_length
+FROM `thematic-coda-418321.trip_2023.new_12_months_dataset`
+GROUP BY member_casual;
+
+-- Insert average ride length each month by user
+INSERT INTO `thematic-coda-418321.trip_2023.ride_statistics` (month, member_casual, avg_ride_length_by_month)
+SELECT month, member_casual, AVG(ride_length) AS avg_ride_length
+FROM `thematic-coda-418321.trip_2023.new_12_months_dataset`
+GROUP BY month, member_casual
+ORDER BY month;
+
+-- Insert number of rides by user type
+INSERT INTO `thematic-coda-418321.trip_2023.ride_statistics` (member_casual, total_num_of_rides)
+SELECT member_casual, COUNT(ride_id) AS total_num_of_rides
+FROM `thematic-coda-418321.trip_2023.new_12_months_dataset`
+GROUP BY member_casual;
+
+-- Insert rides by user and bike type
+INSERT INTO `thematic-coda-418321.trip_2023.ride_statistics` (member_casual, bike_type, total_num_of_rides_by_bike_type)
+SELECT member_casual, rideable_type, COUNT(rideable_type) AS total_number_of_rides
+FROM `thematic-coda-418321.trip_2023.new_12_months_dataset`
+GROUP BY member_casual, rideable_type;
+
+-- Insert total number of rides by day of week
+INSERT INTO `thematic-coda-418321.trip_2023.ride_statistics` (day_of_week, member_casual, total_rides_by_day_of_week)
+SELECT day_of_week, member_casual, COUNT(day_of_week) AS total_rides
+FROM `thematic-coda-418321.trip_2023.new_12_months_dataset`
+GROUP BY day_of_week, member_casual;
