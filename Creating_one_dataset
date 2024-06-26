@@ -1,0 +1,25 @@
+#Create a unified table to hold the combined data
+CREATE TABLE `thematic-coda-418321.trip_2023.12_months_dataset` AS
+SELECT * FROM `thematic-coda-418321.trip_2023.2023_01`
+UNION ALL
+SELECT * FROM `thematic-coda-418321.trip_2023.2023_02`
+UNION ALL
+SELECT * FROM `thematic-coda-418321.trip_2023.2023_03`
+UNION ALL
+SELECT * FROM `thematic-coda-418321.trip_2023.2023_04`
+UNION ALL
+SELECT * FROM `thematic-coda-418321.trip_2023.2023_05`
+UNION ALL
+SELECT * FROM `thematic-coda-418321.trip_2023.2023_06`
+UNION ALL
+SELECT * FROM `thematic-coda-418321.trip_2023.2023_07`
+UNION ALL
+SELECT * FROM `thematic-coda-418321.trip_2023.2023_08`
+UNION ALL
+SELECT * FROM `thematic-coda-418321.trip_2023.2023_09`
+UNION ALL
+SELECT * FROM `thematic-coda-418321.trip_2023.2023_10`
+UNION ALL
+SELECT * FROM `thematic-coda-418321.trip_2023.2023_11`
+UNION ALL
+SELECT * FROM `thematic-coda-418321.trip_2023.2023_12`;
