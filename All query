@@ -1,0 +1,142 @@
+#Create a unified table to hold the combined data
+CREATE TABLE `thematic-coda-418321.trip_2023.12_months_dataset` AS
+SELECT * FROM `thematic-coda-418321.trip_2023.2023_01`
+UNION ALL
+SELECT * FROM `thematic-coda-418321.trip_2023.2023_02`
+UNION ALL
+SELECT * FROM `thematic-coda-418321.trip_2023.2023_03`
+UNION ALL
+SELECT * FROM `thematic-coda-418321.trip_2023.2023_04`
+UNION ALL
+SELECT * FROM `thematic-coda-418321.trip_2023.2023_05`
+UNION ALL
+SELECT * FROM `thematic-coda-418321.trip_2023.2023_06`
+UNION ALL
+SELECT * FROM `thematic-coda-418321.trip_2023.2023_07`
+UNION ALL
+SELECT * FROM `thematic-coda-418321.trip_2023.2023_08`
+UNION ALL
+SELECT * FROM `thematic-coda-418321.trip_2023.2023_09`
+UNION ALL
+SELECT * FROM `thematic-coda-418321.trip_2023.2023_10`
+UNION ALL
+SELECT * FROM `thematic-coda-418321.trip_2023.2023_11`
+UNION ALL
+SELECT * FROM `thematic-coda-418321.trip_2023.2023_12`;
+
+#Checking for number of null values in all columns
+
+SELECT 
+  COUNT(*) - COUNT(ride_id) AS ride_id,
+  COUNT(*) - COUNT(rideable_type) AS rideable_type,
+  COUNT(*) - COUNT(started_at) AS started_at,
+  COUNT(*) - COUNT(ended_at) AS ended_at,
+  COUNT(*) - COUNT(start_station_name) AS start_station_name,
+  COUNT(*) - COUNT(start_station_id) AS start_station_id,
+  COUNT(*) - COUNT(end_station_name) AS end_station_name,
+  COUNT(*) - COUNT(end_station_id) AS end_station_id,
+  COUNT(*) - COUNT(start_lat) AS start_lat,
+  COUNT(*) - COUNT(start_lng) AS start_lng,
+  COUNT(*) - COUNT(end_lat) AS end_lat,
+  COUNT(*) - COUNT(end_lng) AS end_lng,
+  COUNT(*) - COUNT(member_casual) AS member_casual
+FROM 
+  `thematic-coda-418321.trip_2023.new_12_months_dataset`;
+
+#Checking for duplicate rows using ride_id
+
+SELECT 
+  COUNT(ride_id) - COUNT(DISTINCT ride_id) AS duplicate_rows
+FROM 
+  `thematic-coda-418321.trip_2023.new_12_months_dataset`;
+
+#Checking to see if all ride_id's are 16 characters
+
+SELECT 
+  LENGTH(ride_id) AS length_ride_id, 
+  COUNT(ride_id) AS no_of_rows
+FROM 
+  `thematic-coda-418321.trip_2023.new_12_months_dataset`
+GROUP BY 
+  length_ride_id;
+
+#Checking to see how many types of bikes there are
+
+SELECT 
+  DISTINCT rideable_type, 
+  COUNT(rideable_type) AS no_of_trips
+FROM 
+  `thematic-coda-418321.trip_2023.new_12_months_dataset`
+GROUP BY 
+  rideable_type;
+#create a cleaned dataset after removing null values
+CREATE TABLE `thematic-coda-418321.trip_2023.new_12_months_dataset` AS
+SELECT 
+  *
+FROM 
+  `thematic-coda-418321.trip_2023.12_months_dataset`
+WHERE 
+  ride_id IS NOT NULL AND
+  rideable_type IS NOT NULL AND
+  started_at IS NOT NULL AND
+  ended_at IS NOT NULL AND
+  start_station_name IS NOT NULL AND
+  start_station_id IS NOT NULL AND
+  end_station_name IS NOT NULL AND
+  end_station_id IS NOT NULL AND
+  start_lat IS NOT NULL AND
+  start_lng IS NOT NULL AND
+  end_lat IS NOT NULL AND
+  end_lng IS NOT NULL AND
+  member_casual IS NOT NULL;
+
+#create the statstic data
+CREATE TABLE `thematic-coda-418321.trip_2023.ride_statistics` (
+  member_casual STRING,
+  month STRING,
+  day_of_week STRING,
+  bike_type STRING,
+  start_station_name STRING,
+  end_station_name STRING,
+  avg_ride_length FLOAT64,
+  avg_ride_length_by_month FLOAT64,
+  total_num_of_rides INT64,
+  total_num_of_rides_by_bike_type INT64,
+  total_rides_by_day_of_week INT64,
+  total_trips INT64,
+  start_lat FLOAT64,
+  start_lng FLOAT64,
+  end_lat FLOAT64,
+  end_lng FLOAT64
+);
+
+-- Insert average ride length by user
+INSERT INTO `thematic-coda-418321.trip_2023.ride_statistics` (member_casual, avg_ride_length)
+SELECT member_casual, AVG(ride_length) AS avg_ride_length
+FROM `thematic-coda-418321.trip_2023.new_12_months_dataset`
+GROUP BY member_casual;
+
+-- Insert average ride length each month by user
+INSERT INTO `thematic-coda-418321.trip_2023.ride_statistics` (month, member_casual, avg_ride_length_by_month)
+SELECT month, member_casual, AVG(ride_length) AS avg_ride_length
+FROM `thematic-coda-418321.trip_2023.new_12_months_dataset`
+GROUP BY month, member_casual
+ORDER BY month;
+
+-- Insert number of rides by user type
+INSERT INTO `thematic-coda-418321.trip_2023.ride_statistics` (member_casual, total_num_of_rides)
+SELECT member_casual, COUNT(ride_id) AS total_num_of_rides
+FROM `thematic-coda-418321.trip_2023.new_12_months_dataset`
+GROUP BY member_casual;
+
+-- Insert rides by user and bike type
+INSERT INTO `thematic-coda-418321.trip_2023.ride_statistics` (member_casual, bike_type, total_num_of_rides_by_bike_type)
+SELECT member_casual, rideable_type, COUNT(rideable_type) AS total_number_of_rides
+FROM `thematic-coda-418321.trip_2023.new_12_months_dataset`
+GROUP BY member_casual, rideable_type;
+
+-- Insert total number of rides by day of week
+INSERT INTO `thematic-coda-418321.trip_2023.ride_statistics` (day_of_week, member_casual, total_rides_by_day_of_week)
+SELECT day_of_week, member_casual, COUNT(day_of_week) AS total_rides
+FROM `thematic-coda-418321.trip_2023.new_12_months_dataset`
+GROUP BY day_of_week, member_casual;
